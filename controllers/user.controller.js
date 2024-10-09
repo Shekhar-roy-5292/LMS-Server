@@ -5,7 +5,7 @@ const cookieOptions = {
   httpOnly: true,
   secure: true,
 };
-const register = async (req, res, next) => {
+const  register = async (req, res, next) => {
   const { fullName, email, password } = req.body;
   if (!fullName || !email || !password) {
     return next(new AppError(400, "All fields must be provided"));
@@ -24,7 +24,7 @@ const register = async (req, res, next) => {
         "https://img.freepik.com/free-photo/portrait-man-laughing_23-2148859448.jpg",
     },
   });
-  if (user) {
+  if (!user) {
     return next(
       new AppError(400, "User Registration Failed, please try again")
     );
@@ -47,7 +47,7 @@ const login = async (req, res, next) => {
       return next(new AppError(400, "All fields are required"));
     }
     const user = await User.findOne({ email }).select("+password");
-    if (!user || !User.comparePassword(password)) {
+    if (!user || !user.comparePassword(password)) {
       return next(new AppError(401, "Invalid email or password"));
     }
     const token = await user.generateJWTToken();
